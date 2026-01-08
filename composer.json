@@ -1,0 +1,35 @@
+{
+    "name": "vortech/unit-conversions",
+    "description": "Performs unit conversions in Laravel",
+    "keywords": [
+        "vortech",
+        "unit-conversions"
+    ],
+    "homepage": "https://github.com/vortech/unit-conversions",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Mate Papp",
+            "email": "mate@vortech.hu",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^8.2"
+    },
+    "require-dev": {},
+    "autoload": {
+        "psr-4": {
+            "Vortech\\UnitConversions\\": "src"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
