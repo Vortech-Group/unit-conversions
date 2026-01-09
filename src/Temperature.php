@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Vortech\UnitConversions;
 
 use Vortech\UnitConversions\Enums\Unit;
+use Vortech\UnitConversions\ValueObjects\UnitObject;
 
-final class Temperature
+final readonly class Temperature
 {
     private float $convertible;
     private Unit $unit;
@@ -17,31 +18,37 @@ final class Temperature
         $this->unit = $unit;
     }
 
-    public function toCelsius(): float|int
+    public function toCelsius(): UnitObject
     {
-        return match ($this->unit) {
+        $converted = match ($this->unit) {
             Unit::Fahrenheit => ($this->convertible - 32) * 5/9,
             Unit::Kelvin => $this->convertible - 273.15,
             default => $this->convertible
         };
+
+        return UnitObject::make(Unit::Celsius, $converted);
     }
 
-    public function toFahrenheit(): float|int
+    public function toFahrenheit(): UnitObject
     {
-        return match ($this->unit) {
+        $converted = match ($this->unit) {
             Unit::Celsius => ($this->convertible * 9/5) + 32,
             Unit::Kelvin => ($this->convertible - 273.15) * 9/5 + 32,
             default => $this->convertible
         };
+
+        return UnitObject::make(Unit::Fahrenheit, $converted);
     }
 
-    public function toKelvin(): float|int
+    public function toKelvin(): UnitObject
     {
-        return match ($this->unit) {
+        $converted = match ($this->unit) {
             Unit::Celsius => $this->convertible + 273.15,
             Unit::Fahrenheit => ($this->convertible - 32) * 5/9 + 273.15,
             default => $this->convertible
         };
+
+        return UnitObject::make(Unit::Kelvin, $converted);
     }
     
     public static function fromCelsius(float $celsius): self

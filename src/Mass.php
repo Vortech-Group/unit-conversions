@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Vortech\UnitConversions;
 
 use Vortech\UnitConversions\Enums\Unit;
+use Vortech\UnitConversions\ValueObjects\UnitObject;
 
-final class Mass
+final readonly class Mass
 {
     private float $convertible;
     private Unit $unit;
@@ -17,31 +18,37 @@ final class Mass
         $this->unit = $unit;
     }
 
-    public function toGrams(): float|int
+    public function toGrams(): UnitObject
     {
-        return match ($this->unit) {
+        $converted = match ($this->unit) {
             Unit::Kilogram => $this->convertible * 1000,
             Unit::Ton => $this->convertible * 1000 * 1000,
             default => $this->convertible
         };
+
+        return UnitObject::make(Unit::Gram, $converted);
     }
 
-    public function toKilograms(): float|int
+    public function toKilograms(): UnitObject
     {
-        return match ($this->unit) {
+        $converted = match ($this->unit) {
             Unit::Gram => $this->convertible / 1000,
-            Unit::Ton => $this->convertible / 1000 / 1000,
+            Unit::Ton => $this->convertible * 1000,
             default => $this->convertible
         };
+
+        return UnitObject::make(Unit::Kilogram, $converted);
     }
 
-    public function toTons(): float|int
+    public function toTons(): UnitObject
     {
-        return match ($this->unit) {
+        $converted = match ($this->unit) {
             Unit::Gram => $this->convertible / 1000 / 1000,
             Unit::Kilogram => $this->convertible / 1000,
             default => $this->convertible
         };
+
+        return UnitObject::make(Unit::Ton, $converted);
     }
     
     public static function fromGrams(float $grams): self

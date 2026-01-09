@@ -21,4 +21,11 @@ enum Unit: string
     case Decimeter = 'dm';
     case Meter = 'm';
     case Kilometer = 'km';
+
+
+    case Milliliter = 'ml';
+    case Centiliter = 'cl';
+    case Deciliter = 'dl';
+    case Liter = 'l';
+    case Hectoliter = 'hl';
 }

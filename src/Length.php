@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Vortech\UnitConversions;
 
 use Vortech\UnitConversions\Enums\Unit;
+use Vortech\UnitConversions\ValueObjects\UnitObject;
 
-final class Length
+final readonly class Length
 {
     private float $convertible;
     private Unit $unit;
@@ -17,59 +18,69 @@ final class Length
         $this->unit = $unit;
     }
 
-    public function toMillimeter(): float|int
+    public function toMillimeter(): UnitObject
     {
-        return match ($this->unit) {
+        $converted = match ($this->unit) {
             Unit::Centimeter => $this->convertible * 10,
             Unit::Decimeter => $this->convertible * 10 * 10,
             Unit::Meter => $this->convertible * 10 * 10 * 10,
             Unit::Kilometer => $this->convertible * 10 * 10 * 10 * 1000,
             default => $this->convertible
         };
+
+        return UnitObject::make(Unit::Millimeter, $converted);
     }
 
-    public function toCentimeter(): float|int
+    public function toCentimeter(): UnitObject
     {
-        return match ($this->unit) {
+        $converted = match ($this->unit) {
             Unit::Millimeter => $this->convertible / 10,
             Unit::Decimeter => $this->convertible * 10,
             Unit::Meter => $this->convertible * 10 * 10,
             Unit::Kilometer => $this->convertible * 10 * 10 * 1000,
             default => $this->convertible
         };
+
+        return UnitObject::make(Unit::Centimeter, $converted);
     }
 
-    public function toDecimeter(): float|int
+    public function toDecimeter(): UnitObject
     {
-        return match ($this->unit) {
+        $converted = match ($this->unit) {
             Unit::Millimeter => $this->convertible / 10 / 10,
             Unit::Centimeter => $this->convertible / 10,
             Unit::Meter => $this->convertible * 10,
             Unit::Kilometer => $this->convertible * 10 * 1000,
             default => $this->convertible
         };
+
+        return UnitObject::make(Unit::Decimeter, $converted);
     }
 
-    public function toMeter(): float|int
+    public function toMeter(): UnitObject
     {
-        return match ($this->unit) {
+        $converted = match ($this->unit) {
             Unit::Millimeter => $this->convertible / 10 / 10 / 10,
             Unit::Centimeter => $this->convertible / 10 / 10,
             Unit::Decimeter => $this->convertible / 10,
             Unit::Kilometer => $this->convertible * 1000,
             default => $this->convertible
         };
+
+        return UnitObject::make(Unit::Meter, $converted);
     }
 
-    public function toKilometer(): float|int
+    public function toKilometer(): UnitObject
     {
-        return match ($this->unit) {
+        $converted = match ($this->unit) {
             Unit::Millimeter => $this->convertible / 10 / 10 / 10 / 1000,
             Unit::Centimeter => $this->convertible / 10 / 10 / 1000,
             Unit::Decimeter => $this->convertible / 10 / 1000,
             Unit::Meter => $this->convertible / 1000,
             default => $this->convertible
         };
+
+        return UnitObject::make(Unit::Kilometer, $converted);
     }
     
     public static function fromMillimeter(float $millimeter): self
