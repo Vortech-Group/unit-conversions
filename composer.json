@@ -19,12 +19,16 @@
         "php": "^8.2"
     },
     "require-dev": {
-        "ext-bcmath": "*",
         "pestphp/pest": "^4.3"
     },
     "autoload": {
         "psr-4": {
             "Vortech\\UnitConversions\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Vortech\\UnitConversions\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -37,5 +41,7 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true
         }
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
