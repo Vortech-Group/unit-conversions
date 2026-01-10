@@ -2,12 +2,6 @@
 
 Performs unit conversions in Laravel
 
-<section class="article_badges">
-    <a href="https://github.com/Vortech-Group/unit-conversions/releases"><img src="https://img.shields.io/github/release/Vortech-Group/unit-conversions.svg?style=flat-square" alt="Latest Version"></a>
-    <a href="https://github.com/Vortech-Group/unit-conversions/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square" alt="Software License"></a>
-    <a href="https://github.com/Vortech-Group/unit-conversions/actions?query=workflow%3Arun-tests+branch%3Amain"><img src="https://img.shields.io/github/actions/workflow/status/Vortech-Group/unit-conversions/run-tests.yml?label=tests&branch=main&style=flat-square" alt="Build Status"></a>
-</section>
-
 ## Installation
 
 You can install the package by adding the following repository:
