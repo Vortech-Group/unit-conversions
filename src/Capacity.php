@@ -4,107 +4,105 @@ declare(strict_types=1);
 
 namespace Vortech\UnitConversions;
 
-use Vortech\UnitConversions\Enums\Unit;
-use Vortech\UnitConversions\ValueObjects\UnitObject;
+use Vortech\UnitConversions\Concerns\LinearQuantity;
+use Vortech\UnitConversions\Contracts\Unit;
+use Vortech\UnitConversions\Enums\CapacityUnit;
 
-final readonly class Capacity
+/**
+ * @extends LinearQuantity<CapacityUnit>
+ */
+final readonly class Capacity extends LinearQuantity
 {
-    private float $convertible;
-    private Unit $unit;
-
-    public function __construct(float $convertible, Unit $unit)
+    public function __construct(float $value, CapacityUnit $unit)
     {
-        $this->convertible = $convertible;
-        $this->unit = $unit;
+        parent::__construct($value, $unit);
     }
 
-    public function toMilliliters(): UnitObject
+    /**
+     * @param  CapacityUnit  $unit
+     */
+    protected function make(float $value, Unit $unit): static
     {
-        $converted = match ($this->unit) {
-            Unit::Centiliter => $this->convertible * 10,
-            Unit::Deciliter => $this->convertible * 10 * 10,
-            Unit::Liter => $this->convertible * 10 * 10 * 10,
-            Unit::Hectoliter => $this->convertible * 10 * 10 * 10 * 100,
-            default => $this->convertible
-        };
-
-        return UnitObject::make(Unit::Milliliter, $converted);
+        return new self($value, $unit);
     }
 
-    public function toCentiliters(): UnitObject
+    public function toMilliliters(): self
     {
-        $converted = match ($this->unit) {
-            Unit::Milliliter => $this->convertible / 10,
-            Unit::Deciliter => $this->convertible * 10,
-            Unit::Liter => $this->convertible * 10 * 10,
-            Unit::Hectoliter => $this->convertible * 10 * 10 * 100,
-            default => $this->convertible
-        };
-
-        return UnitObject::make(Unit::Centiliter, $converted);
+        return $this->convertTo(CapacityUnit::Milliliter);
     }
 
-    public function toDeciliters(): UnitObject
+    public function toCentiliters(): self
     {
-        $converted = match ($this->unit) {
-            Unit::Milliliter => $this->convertible / 10 / 10,
-            Unit::Centiliter => $this->convertible / 10,
-            Unit::Liter => $this->convertible * 10,
-            Unit::Hectoliter => $this->convertible * 10 * 100,
-            default => $this->convertible
-        };
-
-        return UnitObject::make(Unit::Deciliter, $converted);
+        return $this->convertTo(CapacityUnit::Centiliter);
     }
 
-    public function toLiters(): UnitObject
+    public function toDeciliters(): self
     {
-        $converted = match ($this->unit) {
-            Unit::Milliliter => $this->convertible / 10 / 10 / 10,
-            Unit::Centiliter => $this->convertible / 10 / 10,
-            Unit::Deciliter => $this->convertible / 10,
-            Unit::Hectoliter => $this->convertible * 100,
-            default => $this->convertible
-        };
-
-        return UnitObject::make(Unit::Liter, $converted);
+        return $this->convertTo(CapacityUnit::Deciliter);
     }
 
-    public function toHectoliters(): UnitObject
+    public function toLiters(): self
     {
-        $converted = match ($this->unit) {
-            Unit::Milliliter => $this->convertible / 10 / 10 / 10 / 100,
-            Unit::Centiliter => $this->convertible / 10 / 10 / 100,
-            Unit::Deciliter => $this->convertible / 10 / 100,
-            Unit::Liter => $this->convertible / 100,
-            default => $this->convertible
-        };
-
-        return UnitObject::make(Unit::Hectoliter, $converted);
+        return $this->convertTo(CapacityUnit::Liter);
     }
 
-    public static function fromMilliliters(float $milliliter): self
+    public function toHectoliters(): self
     {
-        return new Capacity($milliliter, Unit::Milliliter);
+        return $this->convertTo(CapacityUnit::Hectoliter);
     }
 
-    public static function fromCentiliters(float $centiliter): self
+    public function toFluidOunces(): self
     {
-        return new Capacity($centiliter, Unit::Centiliter);
+        return $this->convertTo(CapacityUnit::FluidOunce);
     }
 
-    public static function fromDeciliters(float $deciliter): self
+    public function toPints(): self
     {
-        return new Capacity($deciliter, Unit::Deciliter);
+        return $this->convertTo(CapacityUnit::Pint);
     }
 
-    public static function fromLiters(float $liter): self
+    public function toGallons(): self
     {
-        return new Capacity($liter, Unit::Liter);
+        return $this->convertTo(CapacityUnit::Gallon);
     }
 
-    public static function fromHectoliters(float $hectoliter): self
+    public static function fromMilliliters(float $value): self
     {
-        return new Capacity($hectoliter, Unit::Hectoliter);
+        return new self($value, CapacityUnit::Milliliter);
+    }
+
+    public static function fromCentiliters(float $value): self
+    {
+        return new self($value, CapacityUnit::Centiliter);
+    }
+
+    public static function fromDeciliters(float $value): self
+    {
+        return new self($value, CapacityUnit::Deciliter);
+    }
+
+    public static function fromLiters(float $value): self
+    {
+        return new self($value, CapacityUnit::Liter);
+    }
+
+    public static function fromHectoliters(float $value): self
+    {
+        return new self($value, CapacityUnit::Hectoliter);
+    }
+
+    public static function fromFluidOunces(float $value): self
+    {
+        return new self($value, CapacityUnit::FluidOunce);
+    }
+
+    public static function fromPints(float $value): self
+    {
+        return new self($value, CapacityUnit::Pint);
+    }
+
+    public static function fromGallons(float $value): self
+    {
+        return new self($value, CapacityUnit::Gallon);
     }
 }

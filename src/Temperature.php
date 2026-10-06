@@ -4,65 +4,70 @@ declare(strict_types=1);
 
 namespace Vortech\UnitConversions;
 
-use Vortech\UnitConversions\Enums\Unit;
-use Vortech\UnitConversions\ValueObjects\UnitObject;
+use Vortech\UnitConversions\Concerns\Quantity;
+use Vortech\UnitConversions\Contracts\Unit;
+use Vortech\UnitConversions\Enums\TemperatureUnit;
 
-final readonly class Temperature
+/**
+ * @extends Quantity<TemperatureUnit>
+ */
+final readonly class Temperature extends Quantity
 {
-    private float $convertible;
-    private Unit $unit;
-
-    public function __construct(float $convertible, Unit $unit)
+    public function __construct(float $value, TemperatureUnit $unit)
     {
-        $this->convertible = $convertible;
-        $this->unit = $unit;
+        parent::__construct($value, $unit);
     }
 
-    public function toCelsius(): UnitObject
+    /**
+     * @param  TemperatureUnit  $unit
+     */
+    protected function make(float $value, Unit $unit): static
     {
-        $converted = match ($this->unit) {
-            Unit::Fahrenheit => ($this->convertible - 32) * 5/9,
-            Unit::Kelvin => $this->convertible - 273.15,
-            default => $this->convertible
+        return new self($value, $unit);
+    }
+
+    public function toCelsius(): self
+    {
+        return $this->convertTo(TemperatureUnit::Celsius);
+    }
+
+    public function toFahrenheit(): self
+    {
+        return $this->convertTo(TemperatureUnit::Fahrenheit);
+    }
+
+    public function toKelvin(): self
+    {
+        return $this->convertTo(TemperatureUnit::Kelvin);
+    }
+
+    public static function fromCelsius(float $value): self
+    {
+        return new self($value, TemperatureUnit::Celsius);
+    }
+
+    public static function fromFahrenheit(float $value): self
+    {
+        return new self($value, TemperatureUnit::Fahrenheit);
+    }
+
+    public static function fromKelvin(float $value): self
+    {
+        return new self($value, TemperatureUnit::Kelvin);
+    }
+
+    protected function convert(Unit $target): float
+    {
+        $celsius = match ($this->unit) {
+            TemperatureUnit::Fahrenheit => ($this->value - 32) * 5 / 9,
+            TemperatureUnit::Kelvin => $this->value - 273.15,
+            TemperatureUnit::Celsius => $this->value,
         };
 
-        return UnitObject::make(Unit::Celsius, $converted);
-    }
-
-    public function toFahrenheit(): UnitObject
-    {
-        $converted = match ($this->unit) {
-            Unit::Celsius => ($this->convertible * 9/5) + 32,
-            Unit::Kelvin => ($this->convertible - 273.15) * 9/5 + 32,
-            default => $this->convertible
+        return match ($target) {
+            TemperatureUnit::Fahrenheit => $celsius * 9 / 5 + 32,
+            TemperatureUnit::Kelvin => $celsius + 273.15,
+            TemperatureUnit::Celsius => $celsius,
         };
-
-        return UnitObject::make(Unit::Fahrenheit, $converted);
-    }
-
-    public function toKelvin(): UnitObject
-    {
-        $converted = match ($this->unit) {
-            Unit::Celsius => $this->convertible + 273.15,
-            Unit::Fahrenheit => ($this->convertible - 32) * 5/9 + 273.15,
-            default => $this->convertible
-        };
-
-        return UnitObject::make(Unit::Kelvin, $converted);
-    }
-    
-    public static function fromCelsius(float $celsius): self
-    {
-        return new Temperature($celsius, Unit::Celsius);
-    }
-
-    public static function fromFahrenheit(float $fahrenheit): self
-    {
-        return new Temperature($fahrenheit, Unit::Fahrenheit);
-    }
-
-    public static function fromKelvin(float $kelvin): self
-    {
-        return new Temperature($kelvin, Unit::Kelvin);
     }
 }

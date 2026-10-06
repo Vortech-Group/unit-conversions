@@ -4,107 +4,115 @@ declare(strict_types=1);
 
 namespace Vortech\UnitConversions;
 
-use Vortech\UnitConversions\Enums\Unit;
-use Vortech\UnitConversions\ValueObjects\UnitObject;
+use Vortech\UnitConversions\Concerns\LinearQuantity;
+use Vortech\UnitConversions\Contracts\Unit;
+use Vortech\UnitConversions\Enums\LengthUnit;
 
-final readonly class Length
+/**
+ * @extends LinearQuantity<LengthUnit>
+ */
+final readonly class Length extends LinearQuantity
 {
-    private float $convertible;
-    private Unit $unit;
-
-    public function __construct(float $convertible, Unit $unit)
+    public function __construct(float $value, LengthUnit $unit)
     {
-        $this->convertible = $convertible;
-        $this->unit = $unit;
+        parent::__construct($value, $unit);
     }
 
-    public function toMillimeter(): UnitObject
+    /**
+     * @param  LengthUnit  $unit
+     */
+    protected function make(float $value, Unit $unit): static
     {
-        $converted = match ($this->unit) {
-            Unit::Centimeter => $this->convertible * 10,
-            Unit::Decimeter => $this->convertible * 10 * 10,
-            Unit::Meter => $this->convertible * 10 * 10 * 10,
-            Unit::Kilometer => $this->convertible * 10 * 10 * 10 * 1000,
-            default => $this->convertible
-        };
-
-        return UnitObject::make(Unit::Millimeter, $converted);
+        return new self($value, $unit);
     }
 
-    public function toCentimeter(): UnitObject
+    public function toMillimeter(): self
     {
-        $converted = match ($this->unit) {
-            Unit::Millimeter => $this->convertible / 10,
-            Unit::Decimeter => $this->convertible * 10,
-            Unit::Meter => $this->convertible * 10 * 10,
-            Unit::Kilometer => $this->convertible * 10 * 10 * 1000,
-            default => $this->convertible
-        };
-
-        return UnitObject::make(Unit::Centimeter, $converted);
+        return $this->convertTo(LengthUnit::Millimeter);
     }
 
-    public function toDecimeter(): UnitObject
+    public function toCentimeter(): self
     {
-        $converted = match ($this->unit) {
-            Unit::Millimeter => $this->convertible / 10 / 10,
-            Unit::Centimeter => $this->convertible / 10,
-            Unit::Meter => $this->convertible * 10,
-            Unit::Kilometer => $this->convertible * 10 * 1000,
-            default => $this->convertible
-        };
-
-        return UnitObject::make(Unit::Decimeter, $converted);
+        return $this->convertTo(LengthUnit::Centimeter);
     }
 
-    public function toMeter(): UnitObject
+    public function toDecimeter(): self
     {
-        $converted = match ($this->unit) {
-            Unit::Millimeter => $this->convertible / 10 / 10 / 10,
-            Unit::Centimeter => $this->convertible / 10 / 10,
-            Unit::Decimeter => $this->convertible / 10,
-            Unit::Kilometer => $this->convertible * 1000,
-            default => $this->convertible
-        };
-
-        return UnitObject::make(Unit::Meter, $converted);
+        return $this->convertTo(LengthUnit::Decimeter);
     }
 
-    public function toKilometer(): UnitObject
+    public function toMeter(): self
     {
-        $converted = match ($this->unit) {
-            Unit::Millimeter => $this->convertible / 10 / 10 / 10 / 1000,
-            Unit::Centimeter => $this->convertible / 10 / 10 / 1000,
-            Unit::Decimeter => $this->convertible / 10 / 1000,
-            Unit::Meter => $this->convertible / 1000,
-            default => $this->convertible
-        };
-
-        return UnitObject::make(Unit::Kilometer, $converted);
-    }
-    
-    public static function fromMillimeter(float $millimeter): self
-    {
-        return new Length($millimeter, Unit::Millimeter);
+        return $this->convertTo(LengthUnit::Meter);
     }
 
-    public static function fromCentimeter(float $centimeter): self
+    public function toKilometer(): self
     {
-        return new Length($centimeter, Unit::Centimeter);
+        return $this->convertTo(LengthUnit::Kilometer);
     }
 
-    public static function fromDecimeter(float $decimeter): self
+    public function toInch(): self
     {
-        return new Length($decimeter, Unit::Decimeter);
+        return $this->convertTo(LengthUnit::Inch);
     }
 
-    public static function fromMeter(float $meter): self
+    public function toFoot(): self
     {
-        return new Length($meter, Unit::Meter);
+        return $this->convertTo(LengthUnit::Foot);
     }
 
-    public static function fromKilometer(float $kilometer): self
+    public function toYard(): self
     {
-        return new Length($kilometer, Unit::Kilometer);
+        return $this->convertTo(LengthUnit::Yard);
+    }
+
+    public function toMile(): self
+    {
+        return $this->convertTo(LengthUnit::Mile);
+    }
+
+    public static function fromMillimeter(float $value): self
+    {
+        return new self($value, LengthUnit::Millimeter);
+    }
+
+    public static function fromCentimeter(float $value): self
+    {
+        return new self($value, LengthUnit::Centimeter);
+    }
+
+    public static function fromDecimeter(float $value): self
+    {
+        return new self($value, LengthUnit::Decimeter);
+    }
+
+    public static function fromMeter(float $value): self
+    {
+        return new self($value, LengthUnit::Meter);
+    }
+
+    public static function fromKilometer(float $value): self
+    {
+        return new self($value, LengthUnit::Kilometer);
+    }
+
+    public static function fromInch(float $value): self
+    {
+        return new self($value, LengthUnit::Inch);
+    }
+
+    public static function fromFoot(float $value): self
+    {
+        return new self($value, LengthUnit::Foot);
+    }
+
+    public static function fromYard(float $value): self
+    {
+        return new self($value, LengthUnit::Yard);
+    }
+
+    public static function fromMile(float $value): self
+    {
+        return new self($value, LengthUnit::Mile);
     }
 }

@@ -4,65 +4,85 @@ declare(strict_types=1);
 
 namespace Vortech\UnitConversions;
 
-use Vortech\UnitConversions\Enums\Unit;
-use Vortech\UnitConversions\ValueObjects\UnitObject;
+use Vortech\UnitConversions\Concerns\LinearQuantity;
+use Vortech\UnitConversions\Contracts\Unit;
+use Vortech\UnitConversions\Enums\MassUnit;
 
-final readonly class Mass
+/**
+ * @extends LinearQuantity<MassUnit>
+ */
+final readonly class Mass extends LinearQuantity
 {
-    private float $convertible;
-    private Unit $unit;
-
-    public function __construct(float $convertible, Unit $unit)
+    public function __construct(float $value, MassUnit $unit)
     {
-        $this->convertible = $convertible;
-        $this->unit = $unit;
+        parent::__construct($value, $unit);
     }
 
-    public function toGrams(): UnitObject
+    /**
+     * @param  MassUnit  $unit
+     */
+    protected function make(float $value, Unit $unit): static
     {
-        $converted = match ($this->unit) {
-            Unit::Kilogram => $this->convertible * 1000,
-            Unit::Ton => $this->convertible * 1000 * 1000,
-            default => $this->convertible
-        };
-
-        return UnitObject::make(Unit::Gram, $converted);
+        return new self($value, $unit);
     }
 
-    public function toKilograms(): UnitObject
+    public function toMilligrams(): self
     {
-        $converted = match ($this->unit) {
-            Unit::Gram => $this->convertible / 1000,
-            Unit::Ton => $this->convertible * 1000,
-            default => $this->convertible
-        };
-
-        return UnitObject::make(Unit::Kilogram, $converted);
+        return $this->convertTo(MassUnit::Milligram);
     }
 
-    public function toTons(): UnitObject
+    public function toGrams(): self
     {
-        $converted = match ($this->unit) {
-            Unit::Gram => $this->convertible / 1000 / 1000,
-            Unit::Kilogram => $this->convertible / 1000,
-            default => $this->convertible
-        };
-
-        return UnitObject::make(Unit::Ton, $converted);
-    }
-    
-    public static function fromGrams(float $grams): self
-    {
-        return new Mass($grams, Unit::Gram);
+        return $this->convertTo(MassUnit::Gram);
     }
 
-    public static function fromKilograms(float $kilograms): self
+    public function toKilograms(): self
     {
-        return new Mass($kilograms, Unit::Kilogram);
+        return $this->convertTo(MassUnit::Kilogram);
     }
 
-    public static function fromTons(float $tons): self
+    public function toTons(): self
     {
-        return new Mass($tons, Unit::Ton);
+        return $this->convertTo(MassUnit::Ton);
+    }
+
+    public function toOunces(): self
+    {
+        return $this->convertTo(MassUnit::Ounce);
+    }
+
+    public function toPounds(): self
+    {
+        return $this->convertTo(MassUnit::Pound);
+    }
+
+    public static function fromMilligrams(float $value): self
+    {
+        return new self($value, MassUnit::Milligram);
+    }
+
+    public static function fromGrams(float $value): self
+    {
+        return new self($value, MassUnit::Gram);
+    }
+
+    public static function fromKilograms(float $value): self
+    {
+        return new self($value, MassUnit::Kilogram);
+    }
+
+    public static function fromTons(float $value): self
+    {
+        return new self($value, MassUnit::Ton);
+    }
+
+    public static function fromOunces(float $value): self
+    {
+        return new self($value, MassUnit::Ounce);
+    }
+
+    public static function fromPounds(float $value): self
+    {
+        return new self($value, MassUnit::Pound);
     }
 }
